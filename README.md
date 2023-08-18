@@ -12,7 +12,7 @@ The purpose of this app is to experiment on how to use artificial vision technol
 
 Install Flask, Numpy and OpenCV through pip to use the program.
 
-## Functionallity
+## Functionality
 
 1. Draw over a piece of paper or any distinguishable surface (like your skin) the same pattern that is in the ```template.png``` file.
 2. Launch the app: ```python web.py```
