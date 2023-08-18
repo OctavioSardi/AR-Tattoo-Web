@@ -8,9 +8,10 @@ The purpose of this app is to experiment on how to use artificial vision technol
 - Flask
 - Numpy
 - OpenCV
+- Imutils
 - HTML
 
-Install Flask, Numpy and OpenCV through pip to use the program.
+Install Flask, Numpy, Imutils and OpenCV through pip to use the program.
 
 ## Functionality
 
