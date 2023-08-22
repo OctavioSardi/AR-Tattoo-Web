@@ -6,12 +6,12 @@ class TemplateDetector:
     def __init__(self, template_filename, tattoo_filename):
         template1 = cv2.imread(template_filename)
         template1 = cv2.cvtColor(template1, cv2.COLOR_BGR2GRAY)
-        template1 = cv2.Canny(template1, 80, 95)
+        template1 = cv2.Canny(template1, 75, 95)
         self.template = imutils.resize(template1, width=60)
         (self.tH, self.tW) = self.template.shape[:2]
 
         self.tattoo = cv2.imread(tattoo_filename)
-        self.tattoo = imutils.resize(self.tattoo, width=60, inter=cv2.INTER_NEAREST)
+        self.tattoo = imutils.resize(self.tattoo, width=60, inter=cv2.INTER_AREA)
 
         self.found = None
         self.x_offset = 0
@@ -26,7 +26,7 @@ class TemplateDetector:
         # Loop over the scales of the image
         for scale in np.linspace(0.2, 1.0, 20)[::-1]:
             # Resize the image according to the scale
-            resized = cv2.resize(gray, None, fx=scale, fy=scale)
+            resized = cv2.resize(gray, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
             r = gray.shape[1] / float(resized.shape[1])
 
             if resized.shape[0] < self.tH or resized.shape[1] < self.tW:
@@ -34,7 +34,7 @@ class TemplateDetector:
                 break
 
             # Detect edges in the resized grayscale image
-            edged = cv2.Canny(resized, 80, 95)
+            edged = cv2.Canny(resized, 75, 95)
             # Template match to find the template in the image
             result = cv2.matchTemplate(edged, self.template, cv2.TM_CCOEFF)
             (minVal, maxVal, _, maxLoc) = cv2.minMaxLoc(result)
@@ -74,7 +74,7 @@ class TemplateDetector:
             frame[startY:endY, startX:endX] = inpaint
 
             # Draw tattoo around detected result
-            resized_tattoo = cv2.resize(self.tattoo, None, fx=r, fy=r, interpolation=cv2.INTER_NEAREST)
+            resized_tattoo = cv2.resize(self.tattoo, None, fx=r, fy=r, interpolation=cv2.INTER_AREA)
             y1 = startY + self.y_offset
             y1 = 0 if y1 < 0 else y1
             y2 = y1 + resized_tattoo.shape[0]
