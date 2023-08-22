@@ -16,9 +16,14 @@ template_detector = TemplateDetector('template.png', 'img/tattoo.png')
 # Mostramos el video en RT
 
 def gen_frame():
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)  # Set width to 1280 pixels
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)  # Set height to 720 pixels
-    cap.set(cv2.CAP_PROP_FPS, 120)  # Set framerate to 240fps
+
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
+
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)  # Set width to 1280 pixels
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)  # Set height to 720 pixels
+    cap.set(cv2.CAP_PROP_FPS, fps)  # Set framerate to 240fps
 
     while True:
         ret, frame = cap.read()

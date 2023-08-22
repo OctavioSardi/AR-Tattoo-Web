@@ -33,7 +33,7 @@ class TemplateDetector:
                 break
 
             # Detect edges in the resized grayscale image
-            edged = cv2.Canny(resized, 65, 85)
+            edged = cv2.Canny(resized, 75, 95)
             # Template match to find the template in the image
             result = cv2.matchTemplate(edged, self.template, cv2.TM_CCOEFF)
             (minVal, maxVal, _, maxLoc) = cv2.minMaxLoc(result)
