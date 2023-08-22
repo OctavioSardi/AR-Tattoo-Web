@@ -6,12 +6,12 @@ class TemplateDetector:
     def __init__(self, template_filename, tattoo_filename):
         template1 = cv2.imread(template_filename)
         template1 = cv2.cvtColor(template1, cv2.COLOR_BGR2GRAY)
-        template1 = cv2.Canny(template1, 65, 85)
+        template1 = cv2.Canny(template1, 75, 90)
         self.template = imutils.resize(template1, width=60)
         (self.tH, self.tW) = self.template.shape[:2]
 
         self.tattoo = cv2.imread(tattoo_filename)
-        self.tattoo = imutils.resize(self.tattoo, width=60)
+        self.tattoo = imutils.resize(self.tattoo, width=60, inter=cv2.INTER_LANCZOS4)
 
         self.found = None
         self.x_offset = 0
@@ -73,7 +73,7 @@ class TemplateDetector:
             frame[startY:endY, startX:endX] = inpaint
 
             # Draw tattoo around detected result
-            resized_tattoo = cv2.resize(self.tattoo, None, fx=r, fy=r)
+            resized_tattoo = cv2.resize(self.tattoo, None, fx=r, fy=r, interpolation=cv2.INTER_CUBIC)
             y1 = startY + self.y_offset
             y1 = 0 if y1 < 0 else y1
             y2 = y1 + resized_tattoo.shape[0]

@@ -10,7 +10,7 @@ cap = cv2.VideoCapture(0)
 app =  Flask(__name__)
 
 # Inicializamos el TemplateDetector con los paths al patron y al tatuaje
-template_detector = TemplateDetector('template.png', 'img/tattoo.png')
+template_detector = TemplateDetector('Template.png', 'Tattoo.png')
 
 
 # Mostramos el video en RT
