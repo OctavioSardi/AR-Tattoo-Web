@@ -11,7 +11,7 @@ import {
 } from 'url'; // To convert import.meta.url to a file path
 
 
-const YOUR_API_KEY = '519161fafc5ee70b9d2486b87acfe438332629e5fcf762bd1d7970670ea867ffe6b3bca104ffc8fb6314a35327bde222';
+const YOUR_API_KEY = 'PLACE YOUR KEY HERE';
 
 const generateRandomName = () => {
     const randomString = Math.random().toString(36).substring(7);
