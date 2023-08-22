@@ -7,11 +7,11 @@ class TemplateDetector:
         template1 = cv2.imread(template_filename)
         template1 = cv2.cvtColor(template1, cv2.COLOR_BGR2GRAY)
         template1 = cv2.Canny(template1, 75, 95)
-        self.template = imutils.resize(template1, width=60)
+        self.template = imutils.resize(template1, width=80)
         (self.tH, self.tW) = self.template.shape[:2]
 
         self.tattoo = cv2.imread(tattoo_filename)
-        self.tattoo = imutils.resize(self.tattoo, width=60, inter=cv2.INTER_AREA)
+        self.tattoo = imutils.resize(self.tattoo, width=80, inter=cv2.INTER_AREA)
 
         self.found = None
         self.x_offset = 0
@@ -45,7 +45,7 @@ class TemplateDetector:
         self.found = found
 
     def draw_tattoo(self, frame):
-        if self.found[0] < 7e5:
+        if self.found[0] < 12e5:
             # Correlation too low
             pass
         else:

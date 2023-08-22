@@ -58,7 +58,7 @@ const runPipeline = async () => {
         const generatedImageBuffer = await generateImage();
         // const imageWithRemovedBackground = await removeBackground(generatedImageBuffer);
 
-        const outputFileName = 'Tattoo.png';
+        const outputFileName = 'Tattoo-Gen.png';
         const currentFilePath = fileURLToPath(
             import.meta.url); // Convert import.meta.url to file path
         const outputPath = join(dirname(currentFilePath), outputFileName);
