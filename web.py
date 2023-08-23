@@ -26,7 +26,7 @@ def gen_frame():
     cap.set(cv2.CAP_PROP_FPS, fps)  # Set framerate to 240fps
 
     # while True:
-    while video_capture.isOpened():
+    while cap.isOpened():
         ret, frame = cap.read()
 
         if not ret:
@@ -42,7 +42,7 @@ def gen_frame():
             if template_detector.found[0] > 12e5:
                 scale = template_detector.found[2]
                 resized_tattoo = template_detector.resize_svg(scale)
-                modified_frame = template_detector.draw_tattoo(frame.copy())
+                modified_frame = template_detector.draw_tattoo(frame)
                 cv2.imshow('Modified Frame', modified_frame)
 
             suc, encode = cv2.imencode('.jpg', frame)
