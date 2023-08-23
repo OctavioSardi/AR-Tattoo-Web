@@ -6,8 +6,9 @@ class TemplateDetector:
     def __init__(self, template_filename, tattoo_filename):
         template1 = cv2.imread(template_filename)
         template1 = cv2.cvtColor(template1, cv2.COLOR_BGR2GRAY)
-        template1 = cv2.Canny(template1, 75, 95)
-        self.template = imutils.resize(template1, width=80)
+
+        template1 = cv2.Canny(template1, 80, 95)
+        self.template = imutils.resize(template1, width=60)
         (self.tH, self.tW) = self.template.shape[:2]
 
         self.tattoo = cv2.imread(tattoo_filename)
