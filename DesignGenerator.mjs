@@ -2,20 +2,22 @@ import { writeFileSync } from "fs";
 import { join, dirname } from "path";
 import fetch from "node-fetch";
 import { fileURLToPath } from "url"; // To convert import.meta.url to a file path
+import potrace from "potrace"; // Import Potrace
+import Jimp from "jimp"; // Import Jimp for image manipulation
 
 const YOUR_API_KEY =
   "";
 
 const generateRandomName = () => {
   const randomString = Math.random().toString(36).substring(7);
-  return `output_${randomString}.png`;
+  return `output_${randomString}`;
 };
 
 const generateImage = async () => {
   const formGenerate = new FormData();
   formGenerate.append(
     "prompt",
-    "tattoo design, stencil, tattoo stencil, stencil over white background, realistic, head of a vampire bat with bloody fangs"
+    "tattoo design, stencil, tattoo stencil, stencil over white background, old-school, hacking computer"
   );
 
   const generateResponse = await fetch(
@@ -33,40 +35,32 @@ const generateImage = async () => {
   return generateBuffer;
 };
 
-const removeBackground = async (imageBuffer) => {
-  const formRemoveBackground = new FormData();
-  const imageBlob = new Blob([imageBuffer], {
-    type: "image/png",
+const posterizeImage = async (inputPath, outputPath) => {
+  const params = {
+    threshold: 120, // Adjust threshold as needed
+    steps: 4, // Adjust the number of steps
+	background: '#fff'
+  };
+
+  potrace.posterize(inputPath, params, (err, svg) => {
+    if (err) throw err;
+    writeFileSync(outputPath, svg);
+    console.log(`Vectorized image saved as ${outputPath}`);
   });
-  formRemoveBackground.append("image_file", imageBlob, "generated_image.png");
-
-  const removeBackgroundResponse = await fetch(
-    "https://clipdrop-api.co/remove-background/v1",
-    {
-      method: "POST",
-      headers: {
-        "x-api-key": YOUR_API_KEY,
-      },
-      body: formRemoveBackground,
-    }
-  );
-
-  const removeBackgroundBuffer = await removeBackgroundResponse.arrayBuffer();
-  return removeBackgroundBuffer;
 };
 
 const runPipeline = async () => {
   try {
     const generatedImageBuffer = await generateImage();
-    // const imageWithRemovedBackground = await removeBackground(generatedImageBuffer);
 
     const outputFileName = generateRandomName();
-    // const outputFileName = 'Tattoo.png';
-    const currentFilePath = fileURLToPath(import.meta.url); // Convert import.meta.url to file path
-    const outputPath = join(dirname(currentFilePath), outputFileName);
+    const currentFilePath = fileURLToPath(import.meta.url);
+    const outputPathPNG = join(dirname(currentFilePath), outputFileName + ".png");
+    const outputPathSVG = join(dirname(currentFilePath), outputFileName + ".svg");
 
-    // writeFileSync(outputPath, Buffer.from(imageWithRemovedBackground));
-    writeFileSync(outputPath, Buffer.from(generatedImageBuffer));
+    writeFileSync(outputPathPNG, Buffer.from(generatedImageBuffer));
+
+    await posterizeImage(outputPathPNG, outputPathSVG);
 
     console.log(`Image saved as ${outputFileName}`);
   } catch (error) {

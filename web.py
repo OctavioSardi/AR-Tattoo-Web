@@ -25,31 +25,25 @@ def gen_frame():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)  # Set height to 720 pixels
     cap.set(cv2.CAP_PROP_FPS, fps)  # Set framerate to 240fps
 
-    # while True:
     while cap.isOpened():
         ret, frame = cap.read()
-
         if not ret:
             break
 
-        else:
-            frameRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # Detect the template
+        template_detector.detect_template(frame)
 
-            # Detect the template in the frame
-            template_detector.detect_template(frame)
+        # Draw the tattoo if template is detected
+        frame_with_tattoo = template_detector.draw_tattoo(frame)
 
-            # Draw the tattoo if template is found
-            if template_detector.found[0] > 12e5:
-                scale = template_detector.found[2]
-                resized_tattoo = template_detector.resize_svg(scale)
-                modified_frame = template_detector.draw_tattoo(frame)
-                cv2.imshow('Modified Frame', modified_frame)
-
-            suc, encode = cv2.imencode('.jpg', frame)
-            frame = encode.tobytes()
+        # Convert the modified frame to JPEG format
+        _, buffer = cv2.imencode('.jpg', frame_with_tattoo)
+        frame_with_tattoo_bytes = buffer.tobytes()
 
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                b'Content-Type: image/jpeg\r\n\r\n' + frame_with_tattoo_bytes + b'\r\n')
+
+    return Response(gen_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # Ruta de aplicacion 'principal'
 @app.route('/')

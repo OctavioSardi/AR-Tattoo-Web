@@ -1,6 +1,7 @@
 import cv2
 import imutils
 import numpy as np
+import cairosvg
 
 class TemplateDetector:
     def __init__(self, template_filename, tattoo_svg_filename):
@@ -62,49 +63,23 @@ class TemplateDetector:
             print("Template detected")  # Print when template is successfully detected
 
     def draw_tattoo(self, frame):
-        if self.found[0] < 12e5:
-            # Correlation too low
-            pass
-        else:
-            # Show bounding box and tattoo
-            (_, maxLoc, r) = self.found
-            (startX, startY) = (int(maxLoc[0] * r), int(maxLoc[1] * r))
-            (endX, endY) = (int((maxLoc[0] + self.tW) * r), int((maxLoc[1] + self.tH) * r))
+        if self.found[0] >= 12e5 and self.tattoo_png is not None:
+            h, w = self.template.shape
 
-            # Remove template
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            edged = cv2.Canny(gray, 80, 100)
-            sub_canny = edged[startY:endY, startX:endX]
-            sub_frame = frame[startY:endY, startX:endX]
-            # Dilate canny edges
-            kernel = np.ones((3, 3), np.uint8)
-            dilate = cv2.dilate(sub_canny, kernel, iterations=5)
-            dilate = cv2.bitwise_not(dilate)
-            # Remove template from sub-frame
-            sub_frame = cv2.bitwise_or(sub_frame, sub_frame, mask=dilate)
-            # Inpaint sub-frame
-            dilate = cv2.bitwise_not(dilate)
-            inpaint = cv2.inpaint(sub_frame, dilate, 3, cv2.INPAINT_TELEA)
+            # Convert the tattoo PNG bytes to a numpy array
+            tattoo_array = np.frombuffer(self.tattoo_png, dtype=np.uint8)
+            tattoo_img = cv2.imdecode(tattoo_array, cv2.IMREAD_UNCHANGED)
 
-            frame[startY:endY, startX:endX] = inpaint
+            y_offset, x_offset = self.found[1]  # Get the location of the template
 
-            # Draw the stored PNG tattoo image over the template region
-            if self.tattoo_png is not None:
-                y1 = startY + self.y_offset
-                y1 = 0 if y1 < 0 else y1
-                y2 = y1 + self.tattoo_png.shape[0]
-
-                x1 = startX + self.x_offset
-                x1 = 0 if x1 < 0 else x1
-                x2 = x1 + self.tattoo_png.shape[1]
-
-                if y2 < frame.shape[0] and x2 < frame.shape[1]:
-                    # Tattoo fits frame
-                    for c in range(0, 3):
-                        # Apply tattoo with transparency to image
-                        alpha = self.tattoo_png[:, :, 2] / 255.0
-                        color = self.tattoo_png[:, :, c] * (1.0 - alpha)
-                        beta = frame[y1:y2, x1:x2, c] * alpha
-                        frame[y1:y2, x1:x2, c] = color + beta
+            # Ensure the tattoo image fits within the frame boundaries
+            if y_offset + tattoo_img.shape[0] <= frame.shape[0] and x_offset + tattoo_img.shape[1] <= frame.shape[1]:
+                # Overlay the tattoo image on the frame
+                for c in range(0, 3):
+                    frame[y_offset:y_offset + tattoo_img.shape[0], x_offset:x_offset + tattoo_img.shape[1], c] = (
+                        tattoo_img[..., c] * (tattoo_img[..., 3] / 255.0) +
+                        frame[y_offset:y_offset + tattoo_img.shape[0], x_offset:x_offset + tattoo_img.shape[1], c] *
+                        (1.0 - tattoo_img[..., 3] / 255.0)
+                    )
 
         return frame
