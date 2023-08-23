@@ -10,7 +10,7 @@ cap = cv2.VideoCapture(0)
 app =  Flask(__name__)
 
 # Inicializamos el TemplateDetector con los paths al patron y al tatuaje
-template_detector = TemplateDetector('Template.png', 'Tattoo.png')
+template_detector = TemplateDetector('Template.png', 'Tattoo.svg')
 
 
 # Mostramos el video en RT
@@ -25,7 +25,8 @@ def gen_frame():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)  # Set height to 720 pixels
     cap.set(cv2.CAP_PROP_FPS, fps)  # Set framerate to 240fps
 
-    while True:
+    # while True:
+    while video_capture.isOpened():
         ret, frame = cap.read()
 
         if not ret:
@@ -39,7 +40,10 @@ def gen_frame():
 
             # Draw the tattoo if template is found
             if template_detector.found[0] > 12e5:
-                frame = template_detector.draw_tattoo(frame)
+                scale = template_detector.found[2]
+                resized_tattoo = template_detector.resize_svg(scale)
+                modified_frame = template_detector.draw_tattoo(frame.copy())
+                cv2.imshow('Modified Frame', modified_frame)
 
             suc, encode = cv2.imencode('.jpg', frame)
             frame = encode.tobytes()

@@ -3,7 +3,7 @@ import imutils
 import numpy as np
 
 class TemplateDetector:
-    def __init__(self, template_filename, tattoo_filename):
+    def __init__(self, template_filename, tattoo_svg_filename):
         template1 = cv2.imread(template_filename)
         template1 = cv2.cvtColor(template1, cv2.COLOR_BGR2GRAY)
 
@@ -11,13 +11,23 @@ class TemplateDetector:
         self.template = imutils.resize(template1, width=60)
         (self.tH, self.tW) = self.template.shape[:2]
 
-        self.tattoo = cv2.imread(tattoo_filename)
-        self.tattoo = imutils.resize(self.tattoo, width=80, inter=cv2.INTER_AREA)
+        self.tattoo_svg_filename = tattoo_svg_filename
 
         self.found = None
         self.x_offset = 0
         self.y_offset = 0
         self.dim = (60, 60)
+
+    def resize_svg(self, scale):
+        with open(self.tattoo_svg_filename, "rb") as svg_file:
+            svg_content = svg_file.read()
+
+        # Convert SVG to a rasterized PNG at a specific scale
+        svg_image = cairosvg.svg2png(bytestring=svg_content, scale=scale)
+        nparr = np.frombuffer(svg_image, np.uint8)
+        tattoo_raster = cv2.imdecode(nparr, cv2.IMREAD_UNCHANGED)
+
+        return tattoo_raster
 
     def detect_template(self, frame):
         # Convert frame to grayscale
