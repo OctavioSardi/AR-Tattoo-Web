@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 import { fileURLToPath } from "url"; // To convert import.meta.url to a file path
 
 const YOUR_API_KEY =
-  "229dd823c184d5793446c72cf457565c9f26903656fef04aef9605aa8d28605df05ff156e2b16b9444eb538cb762b8d4";
+  "";
 
 const generateRandomName = () => {
   const randomString = Math.random().toString(36).substring(7);
