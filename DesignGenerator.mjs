@@ -17,7 +17,7 @@ const generateImage = async () => {
   const formGenerate = new FormData();
   formGenerate.append(
     "prompt",
-    "tattoo design, stencil, tattoo stencil, stencil over white background, old-school, hacking computer"
+    "tattoo design, stencil, tattoo stencil, stencil over white background, hyperrealistic, PlayStation 6"
   );
 
   const generateResponse = await fetch(
