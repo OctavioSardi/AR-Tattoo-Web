@@ -6,7 +6,7 @@ import potrace from "potrace"; // Import Potrace
 import Jimp from "jimp"; // Import Jimp for image manipulation
 
 const YOUR_API_KEY =
-  "";
+  "229dd823c184d5793446c72cf457565c9f26903656fef04aef9605aa8d28605df05ff156e2b16b9444eb538cb762b8d4";
 
 const generateRandomName = () => {
   const randomString = Math.random().toString(36).substring(7);
@@ -17,7 +17,7 @@ const generateImage = async () => {
   const formGenerate = new FormData();
   formGenerate.append(
     "prompt",
-    "tattoo design, stencil, tattoo stencil, stencil over white background, hyperrealistic, PlayStation 6"
+    "tattoo design, stencil, tattoo stencil, stencil over a plain white background, no shadows, no lighting, realistic, Lighting striking a sword"
   );
 
   const generateResponse = await fetch(
@@ -37,7 +37,6 @@ const generateImage = async () => {
 
 const posterizeImage = async (inputPath, outputPath) => {
   const params = {
-    threshold: 120, // Adjust threshold as needed
     steps: 4, // Adjust the number of steps
 	background: '#fff'
   };
