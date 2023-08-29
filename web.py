@@ -38,7 +38,7 @@ def gen_frame():
             template_detector.detect_template(frame)
 
             # Draw the tattoo if template is found
-            if template_detector.found[0] > 12e5:
+            if template_detector.found[0] > 10e5:
                 frame = template_detector.draw_tattoo(frame)
 
             suc, encode = cv2.imencode('.jpg', frame)
