@@ -6,7 +6,7 @@ class TemplateDetector:
     def __init__(self, template_filename, tattoo_filename):
         template1 = cv2.imread(template_filename)
         template1 = cv2.cvtColor(template1, cv2.COLOR_BGR2GRAY)
-        template1 = cv2.Canny(template1, 60, 80)
+        template1 = cv2.Canny(template1, 50, 75)
         self.template = imutils.resize(template1, width=80)
         (self.tH, self.tW) = self.template.shape[:2]
 
@@ -34,7 +34,7 @@ class TemplateDetector:
                 break
 
             # Detect edges in the resized grayscale image
-            edged = cv2.Canny(resized, 60, 80)
+            edged = cv2.Canny(resized, 50, 75)
             # Template match to find the template in the image
             result = cv2.matchTemplate(edged, self.template, cv2.TM_CCOEFF)
             (minVal, maxVal, _, maxLoc) = cv2.minMaxLoc(result)
@@ -45,7 +45,7 @@ class TemplateDetector:
         self.found = found
 
     def draw_tattoo(self, frame):
-        if self.found[0] < 10e5:
+        if self.found[0] < 9e5:
             # Correlation too low
             pass
         else:
