@@ -15,7 +15,7 @@ const generateImage = async () => {
   const formGenerate = new FormData();
   formGenerate.append(
     "prompt",
-    "tattoo design, stencil, tattoo stencil, stencil over white background, realistic, head of a vampire bat with bloody fangs"
+    "tattoo design, stencil, tattoo stencil, stencil over white background, anime style, One Piece Luffy"
   );
 
   const generateResponse = await fetch(
